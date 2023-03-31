@@ -60,9 +60,16 @@ class TodoFragment : Fragment() {
     }
 
     private fun initListeners() {
-        binding.fabAddTask.setOnClickListener {
-            initDialog()
-        }
+        binding.fabAddTask.setOnClickListener { initDialog() }
+
+        binding.svTodoApp.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                taskViewModel.searchTask(newText.orEmpty())
+                return false
+            }
+        })
     }
 
     private fun initUI() {

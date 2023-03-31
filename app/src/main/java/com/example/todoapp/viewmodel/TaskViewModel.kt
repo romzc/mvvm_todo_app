@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskProvider
-import java.security.Provider
 
 class TaskViewModel() : ViewModel() {
 
@@ -31,7 +30,6 @@ class TaskViewModel() : ViewModel() {
 
     fun deleteTask(task: Task) {
         _tasks.value = _tasks.value?.filter { it.id != task.id }
-
         TaskProvider.deleteTask(task)
     }
 
@@ -39,7 +37,6 @@ class TaskViewModel() : ViewModel() {
         val newId = TaskProvider.getAllTask().size
         val newTask = Task(newId +1, title, description)
         TaskProvider.insertTask(newTask)
-
         _tasks.value = _tasks.value.orEmpty() + newTask
     }
 
@@ -48,7 +45,13 @@ class TaskViewModel() : ViewModel() {
             _tasks.value = TaskProvider.getAllTask()
         }
         else {
+            val auxTask = TaskProvider.getAllTask()
+            // Aqui obtenemos todos las tareas que tienen como titulo algun patron que
+            // el usuario ingresa en el buscador.
+            val filteredTasks = auxTask.filter { it.title.contains(other = title, ignoreCase = true ) }
 
+            // despues modificacmos el valor de nuestro viewModel.
+            _tasks.value = filteredTasks
         }
     }
 }
