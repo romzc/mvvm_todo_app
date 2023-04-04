@@ -1,5 +1,6 @@
 package com.example.todoapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,10 +8,12 @@ import androidx.lifecycle.ViewModel
 import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskProvider
 
+// Modificaciones.
 class TaskViewModel() : ViewModel() {
 
     private val _tasks = MutableLiveData<List<Task>>(emptyList())
     val tasks: LiveData<List<Task>> = _tasks
+    //val provider = TaskProvider(context)
 
     fun loadTasks() {
         _tasks.value = TaskProvider.getAllTask().toList()
