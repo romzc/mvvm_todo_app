@@ -5,25 +5,22 @@ import android.content.Context
 class TaskProvider(context: Context) {
 
     private val db = AppDatabase.getDatabase(context)
-/*
     // se agrego todas las funciones necesarias.
-    fun getAllTask(): List<Task> {
+    suspend fun getAllTask(): List<Task> {
         return db.taskDao().getAll()
     }
 
-    fun getInsertTask(newTask: Task) {
+    suspend fun getInsertTask(newTask: Task) {
         db.taskDao().insert(newTask)
     }
 
-    fun deleteTask(task: Task) {
+    suspend fun deleteTask(task: Task) {
         db.taskDao().delete(task)
     }
 
-    fun updateTask(task: Task) {
+    suspend fun updateTask(task: Task) {
         db.taskDao().update(task)
     }
-
- */
 
     companion object {
         private val tasks = mutableListOf(

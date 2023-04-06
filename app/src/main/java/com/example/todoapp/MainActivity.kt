@@ -3,8 +3,8 @@ package com.example.todoapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.example.todoapp.databinding.ActivityMainBinding
+import com.example.todoapp.model.TaskProvider
 import com.example.todoapp.view.TodoFragment
 
 class MainActivity : AppCompatActivity() {
@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        changeFragment(TodoFragment())
+        val provider = TaskProvider(this)
+        changeFragment(TodoFragment(provider))
     }
 
     private fun changeFragment(fragment: Fragment) {

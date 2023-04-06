@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTodoBinding
 import com.example.todoapp.databinding.ShowDialogBinding
+import com.example.todoapp.factory.TaskViewModelFactory
 import com.example.todoapp.model.Task
+import com.example.todoapp.model.TaskProvider
 import com.example.todoapp.viewmodel.TaskViewModel
 
-class TodoFragment : Fragment() {
+class TodoFragment(private val taskProvider: TaskProvider) : Fragment() {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var taskViewModel: TaskViewModel
@@ -73,7 +75,11 @@ class TodoFragment : Fragment() {
     }
 
     private fun initUI() {
-        taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
+        // Aqui creamos el viewModel de las tareas.
+        val viewModelFactory = TaskViewModelFactory(taskProvider)
+        taskViewModel = ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
+
+        // En esta sección configuramos el recycler view.
         adapterTask = TaskAdapter(
             updateTask = { task ->
                 task.done = !task.done
@@ -96,8 +102,8 @@ class TodoFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TodoFragment().apply {
+        fun newInstance(provider: TaskProvider) =
+            TodoFragment(provider).apply {
                 arguments = Bundle()
             }
     }

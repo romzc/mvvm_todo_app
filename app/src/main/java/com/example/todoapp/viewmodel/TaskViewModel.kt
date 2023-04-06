@@ -1,22 +1,30 @@
 package com.example.todoapp.viewmodel
 
 import android.content.Context
+import android.provider.Settings.Global
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskProvider
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.processNextEventInCurrentThread
+import kotlin.coroutines.coroutineContext
 
 // Modificaciones.
-class TaskViewModel() : ViewModel() {
+class TaskViewModel(private val provider: TaskProvider) : ViewModel() {
 
     private val _tasks = MutableLiveData<List<Task>>(emptyList())
     val tasks: LiveData<List<Task>> = _tasks
-    //val provider = TaskProvider(context)
+    //val taskProvider: TaskProvider = TaskProvider()
 
     fun loadTasks() {
         _tasks.value = TaskProvider.getAllTask().toList()
+        viewModelScope.launch {
+            _tasks.value = provider.getAllTask()
+        }
     }
 
     // push new task
@@ -28,6 +36,7 @@ class TaskViewModel() : ViewModel() {
         _tasks.value = newTasks
         //Log.i("TODO1", "${System.identityHashCode(_tasks.value)} -- ${System.identityHashCode(TaskProvider.getAllTask())}")
         //Log.i("TODO1", "${_tasks.value.hashCode()} -- ${TaskProvider.getAllTask().hashCode()}")
+
         TaskProvider.updateTask(task)
     }
 
@@ -38,20 +47,20 @@ class TaskViewModel() : ViewModel() {
 
     fun addNewTask(title: String, description: String) {
         val newId = TaskProvider.getAllTask().size
-        val newTask = Task(newId +1, title, description)
+        val newTask = Task(newId + 1, title, description)
         TaskProvider.insertTask(newTask)
         _tasks.value = _tasks.value.orEmpty() + newTask
     }
 
     fun searchTask(title: String) {
-        if( title.isEmpty() ) {
+        if (title.isEmpty()) {
             _tasks.value = TaskProvider.getAllTask()
-        }
-        else {
+        } else {
             val auxTask = TaskProvider.getAllTask()
             // Aqui obtenemos todos las tareas que tienen como titulo algun patron que
             // el usuario ingresa en el buscador.
-            val filteredTasks = auxTask.filter { it.title.contains(other = title, ignoreCase = true ) }
+            val filteredTasks =
+                auxTask.filter { it.title.contains(other = title, ignoreCase = true) }
 
             // despues modificacmos el valor de nuestro viewModel.
             _tasks.value = filteredTasks
