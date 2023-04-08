@@ -18,13 +18,9 @@ class TaskViewModel(private val provider: TaskProvider) : ViewModel() {
 
     private val _tasks = MutableLiveData<List<Task>>(emptyList())
     val tasks: LiveData<List<Task>> = _tasks
-    //val taskProvider: TaskProvider = TaskProvider()
 
     fun loadTasks() {
         _tasks.value = TaskProvider.getAllTask().toList()
-        viewModelScope.launch {
-            _tasks.value = provider.getAllTask()
-        }
     }
 
     // push new task
@@ -36,7 +32,6 @@ class TaskViewModel(private val provider: TaskProvider) : ViewModel() {
         _tasks.value = newTasks
         //Log.i("TODO1", "${System.identityHashCode(_tasks.value)} -- ${System.identityHashCode(TaskProvider.getAllTask())}")
         //Log.i("TODO1", "${_tasks.value.hashCode()} -- ${TaskProvider.getAllTask().hashCode()}")
-
         TaskProvider.updateTask(task)
     }
 

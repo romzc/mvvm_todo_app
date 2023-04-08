@@ -2,25 +2,7 @@ package com.example.todoapp.model
 
 import android.content.Context
 
-class TaskProvider(context: Context) {
-
-    private val db = AppDatabase.getDatabase(context)
-    // se agrego todas las funciones necesarias.
-    suspend fun getAllTask(): List<Task> {
-        return db.taskDao().getAll()
-    }
-
-    suspend fun getInsertTask(newTask: Task) {
-        db.taskDao().insert(newTask)
-    }
-
-    suspend fun deleteTask(task: Task) {
-        db.taskDao().delete(task)
-    }
-
-    suspend fun updateTask(task: Task) {
-        db.taskDao().update(task)
-    }
+class TaskProvider() {
 
     companion object {
         private val tasks = mutableListOf(

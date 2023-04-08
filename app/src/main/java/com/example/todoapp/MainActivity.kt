@@ -19,8 +19,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        val provider = TaskProvider(this)
-        changeFragment(TodoFragment(provider))
+        changeFragment(TodoFragment())
     }
 
     private fun changeFragment(fragment: Fragment) {

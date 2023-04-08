@@ -1,9 +1,7 @@
 package com.example.todoapp.view
 
 import android.app.Dialog
-import android.os.Binder
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,20 +11,18 @@ import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTodoBinding
-import com.example.todoapp.databinding.ShowDialogBinding
 import com.example.todoapp.factory.TaskViewModelFactory
-import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskProvider
 import com.example.todoapp.viewmodel.TaskViewModel
 
-class TodoFragment(private val taskProvider: TaskProvider) : Fragment() {
+class TodoFragment() : Fragment() {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var adapterTask: TaskAdapter
+    private lateinit var viewModelFactory: TaskViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +71,11 @@ class TodoFragment(private val taskProvider: TaskProvider) : Fragment() {
     }
 
     private fun initUI() {
-        // Aqui creamos el viewModel de las tareas.
-        val viewModelFactory = TaskViewModelFactory(taskProvider)
+        // Aqui creamos el viewModel de tasks.
+        // first of all we instance a task viewModel factory to inject a task provider
+        viewModelFactory = TaskViewModelFactory(TaskProvider())
+        // THen instance a viewModel with viewModelProvider, this code returns and viewModel with
+        // taskProvider injected.
         taskViewModel = ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
 
         // En esta sección configuramos el recycler view.
@@ -103,7 +102,7 @@ class TodoFragment(private val taskProvider: TaskProvider) : Fragment() {
 
         @JvmStatic
         fun newInstance(provider: TaskProvider) =
-            TodoFragment(provider).apply {
+            TodoFragment().apply {
                 arguments = Bundle()
             }
     }
