@@ -4,7 +4,8 @@ import android.content.Context
 
 class TaskProvider(context: Context) {
 
-    val db = AppDatabase.getDatabase(context)
+    private val db = AppDatabase.getDatabase(context)
+
 
     companion object {
         private val tasks = mutableListOf(
