@@ -73,7 +73,7 @@ class TodoFragment() : Fragment() {
     private fun initUI() {
         // Aqui creamos el viewModel de tasks.
         // first of all we instance a task viewModel factory to inject a task provider
-        viewModelFactory = TaskViewModelFactory(TaskProvider())
+        viewModelFactory = TaskViewModelFactory(TaskProvider(this.requireContext()))
         // THen instance a viewModel with viewModelProvider, this code returns and viewModel with
         // taskProvider injected.
         taskViewModel = ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]

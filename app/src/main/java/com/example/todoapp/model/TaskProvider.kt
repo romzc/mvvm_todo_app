@@ -2,7 +2,9 @@ package com.example.todoapp.model
 
 import android.content.Context
 
-class TaskProvider() {
+class TaskProvider(context: Context) {
+
+    val db = AppDatabase.getDatabase(context)
 
     companion object {
         private val tasks = mutableListOf(
