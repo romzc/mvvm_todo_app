@@ -1,11 +1,11 @@
 package com.example.todoapp.model
 
-import android.content.Context
 
-class TaskProvider(context: Context) {
-
-    private val db = AppDatabase.getDatabase(context)
-
+class TaskProvider(private val taskDao: TaskDao) {
+     fun getAllTasks(): List<Task> = taskDao.getAll()
+     fun insertTask(task: Task) = taskDao.insert(task)
+     fun updateTask(task: Task) = taskDao.update(task)
+     fun deleteTask(task: Task) = taskDao.delete(task)
 
     companion object {
         private val tasks = mutableListOf(
@@ -31,7 +31,7 @@ class TaskProvider(context: Context) {
 
         fun updateTask(task: Task) {
             this.tasks.forEach {
-                if( it.id == task.id) it.done = task.done
+                if (it.id == task.id) it.done = task.done
             }
         }
     }

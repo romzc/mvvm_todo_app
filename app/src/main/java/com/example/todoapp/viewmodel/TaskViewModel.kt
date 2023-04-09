@@ -1,4 +1,4 @@
-package com.example.todoapp.viewmodel
+    package com.example.todoapp.viewmodel
 
 import android.content.Context
 import android.provider.Settings.Global
@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.processNextEventInCurrentThread
 import kotlin.coroutines.coroutineContext
@@ -20,45 +22,51 @@ class TaskViewModel(private val provider: TaskProvider) : ViewModel() {
     val tasks: LiveData<List<Task>> = _tasks
 
     fun loadTasks() {
-        _tasks.value = TaskProvider.getAllTask().toList()
+        viewModelScope.launch(Dispatchers.IO) {
+            _tasks.postValue(provider.getAllTasks())
+        }
     }
 
     // push new task
     fun completeTask(task: Task) {
-        val newTasks = _tasks.value?.map { item ->
-            if (item.id == task.id) task
-            else item
-        } ?: emptyList()
-        _tasks.value = newTasks
-        //Log.i("TODO1", "${System.identityHashCode(_tasks.value)} -- ${System.identityHashCode(TaskProvider.getAllTask())}")
-        //Log.i("TODO1", "${_tasks.value.hashCode()} -- ${TaskProvider.getAllTask().hashCode()}")
-        TaskProvider.updateTask(task)
+        viewModelScope.launch(Dispatchers.IO) {
+            provider.updateTask(task)
+            loadTasks()
+        }
+        // Log.i("TODO1", "${System.identityHashCode(_tasks.value)} -- ${System.identityHashCode(TaskProvider.getAllTask())}")
+        // Log.i("TODO1", "${_tasks.value.hashCode()} -- ${TaskProvider.getAllTask().hashCode()}")
+        // TaskProvider.updateTask(task)
     }
 
     fun deleteTask(task: Task) {
-        _tasks.value = _tasks.value?.filter { it.id != task.id }
-        TaskProvider.deleteTask(task)
+        viewModelScope.launch(Dispatchers.IO) {
+            provider.deleteTask(task)
+            loadTasks()
+        }
     }
 
     fun addNewTask(title: String, description: String) {
-        val newId = TaskProvider.getAllTask().size
-        val newTask = Task(newId + 1, title, description)
-        TaskProvider.insertTask(newTask)
-        _tasks.value = _tasks.value.orEmpty() + newTask
+        viewModelScope.launch(Dispatchers.IO) {
+            val newTask = Task(title = title, description = description)
+            provider.insertTask(newTask)
+            loadTasks()
+        }
     }
 
     fun searchTask(title: String) {
         if (title.isEmpty()) {
-            _tasks.value = TaskProvider.getAllTask()
+            loadTasks()
         } else {
-            val auxTask = TaskProvider.getAllTask()
-            // Aqui obtenemos todos las tareas que tienen como titulo algun patron que
-            // el usuario ingresa en el buscador.
-            val filteredTasks =
-                auxTask.filter { it.title.contains(other = title, ignoreCase = true) }
+            viewModelScope.launch(Dispatchers.IO) {
+                val auxTask = provider.getAllTasks()
+                // Aqui obtenemos todos las tareas que tienen como titulo algun patron que
+                // el usuario ingresa en el buscador.
+                val filter =
+                    auxTask.filter { it.title.contains(other = title, ignoreCase = true) }
 
-            // despues modificacmos el valor de nuestro viewModel.
-            _tasks.value = filteredTasks
+                // despues modificacmos el valor de nuestro viewModel.
+                _tasks.postValue(filter)
+            }
         }
     }
 }

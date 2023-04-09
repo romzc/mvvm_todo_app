@@ -12,7 +12,7 @@ import androidx.room.Update
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM tasks")
-    fun getAll(): LiveData<List<Task>>
+    fun getAll(): List<Task>
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     fun getTaskById(taskId: Int): Task?
